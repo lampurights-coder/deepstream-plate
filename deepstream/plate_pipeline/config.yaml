@@ -1,0 +1,45 @@
+# DeepStream plate detect + RobustScanner OCR (6 streams = 2 RTSP × 3)
+#
+# Cam map (source_id → label):
+#   0,1,2 → cam 11 (CAMERA_A)
+#   3,4,5 → cam 12 (CAMERA_B)
+
+rtsp_bases:
+  - id: 11
+    url: "rtsp://user:pass@CAMERA_HOST:554/cam/realmonitor?channel=1&subtype=0"
+    replicate: 3
+  - id: 12
+    url: "rtsp://user:pass@CAMERA_HOST:554/cam/realmonitor?channel=1&subtype=0"
+    replicate: 3
+
+# Detector (DeepStream [N,6] engine — NOT Ultralytics yolo12_fp16.engine)
+detector:
+  engine: /workspace/models/yolo12_plate_ds_fp16.engine
+  onnx: /workspace/models/yolo12_plate_ds.onnx
+  labels: /workspace/deepstream/plate_pipeline/labels_plate.txt
+  conf_thresh: 0.01
+  plate_class_id: 30
+  # Documented: Ultralytics names map class 30 → plate (training label quirk may show '8')
+  num_classes: 32
+  imgsz: 960
+  batch_size: 1
+  unique_id: 1
+
+# OCR (RobustScanner TensorRT — used from pad probe, not secondary nvinfer)
+ocr:
+  engine: /workspace/license-plate/models/rb_scaner_fp16.engine
+  dict: /workspace/license-plate/dictionary_plate/dict90.txt
+  conf_thresh: 0.94
+  batch_num: 1
+
+mux:
+  batch_size: 6
+  width: 1920
+  height: 1080
+  live_source: 1
+  batched_push_timeout: 40000
+
+preview:
+  tiler_rows: 2
+  tiler_cols: 3
+  sink: fakesink   # fakesink | file | egl

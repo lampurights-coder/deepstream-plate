@@ -1,0 +1,43 @@
+rtsp_bases:
+- id: 0
+  url: rtsp://127.0.0.1:8554/cam0
+  replicate: 1
+- id: 1
+  url: rtsp://127.0.0.1:8554/cam1
+  replicate: 1
+- id: 2
+  url: rtsp://127.0.0.1:8554/cam2
+  replicate: 1
+- id: 3
+  url: rtsp://127.0.0.1:8554/cam3
+  replicate: 1
+- id: 4
+  url: rtsp://127.0.0.1:8554/cam4
+  replicate: 1
+- id: 5
+  url: rtsp://127.0.0.1:8554/cam5
+  replicate: 1
+detector:
+  engine: /workspace/models/yolo12_plate_ds_fp16.engine
+  onnx: /workspace/models/yolo12_plate_ds.onnx
+  labels: /workspace/deepstream/plate_pipeline/labels_plate.txt
+  conf_thresh: 0.01
+  plate_class_id: 30
+  num_classes: 32
+  imgsz: 960
+  batch_size: 1
+  unique_id: 1
+ocr:
+  engine: /workspace/license-plate/models/rb_scaner_fp16.engine
+  dict: /workspace/license-plate/dictionary_plate/dict90.txt
+  conf_thresh: 0.25
+mux:
+  batch_size: 6
+  width: 1280
+  height: 720
+  live_source: 1
+  batched_push_timeout: 40000
+preview:
+  tiler_rows: 2
+  tiler_cols: 3
+  sink: file

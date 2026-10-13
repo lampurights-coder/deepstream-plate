@@ -1,0 +1,28 @@
+[property]
+gpu-id=0
+net-scale-factor=0.0039215697906911373
+model-color-format=0
+# DeepStream [N,6] export from license-plate best.pt (NOT Ultralytics yolo12_fp16.engine)
+onnx-file=/workspace/models/yolo12_plate_ds.onnx
+model-engine-file=/workspace/models/yolo12_plate_ds_fp16.engine
+labelfile-path=/workspace/deepstream/plate_pipeline/labels_plate.txt
+batch-size=1
+network-mode=2
+num-detected-classes=32
+interval=0
+gie-unique-id=1
+process-mode=1
+network-type=0
+cluster-mode=2
+maintain-aspect-ratio=1
+symmetric-padding=1
+# Input size matches export IMGSZ=960
+infer-dims=3;960;960
+parse-bbox-func-name=NvDsInferParseYolo
+custom-lib-path=/workspace/deepstream/DeepStream-Yolo/nvdsinfer_custom_impl_Yolo/libnvdsinfer_custom_impl_Yolo.so
+
+[class-attrs-all]
+nms-iou-threshold=0.45
+# Live cameras often score plates ~0.01–0.05; keep low like detector_yolo ModelBatch (conf=0.001)
+pre-cluster-threshold=0.01
+topk=50

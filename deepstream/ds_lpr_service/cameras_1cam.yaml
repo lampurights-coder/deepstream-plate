@@ -1,0 +1,21 @@
+cameras:
+- bucket: plates-cam0
+  id: cam0
+  url: rtsp://127.0.0.1:8554/cam0
+detector:
+  engine: /workspace/models/yolo12_plate_ds_fp16.engine
+  infer_config: /workspace/deepstream/plate_pipeline/config_infer_primary_plate.txt
+  plate_class_id: 30
+minio:
+  access_key: minioadmin
+  endpoint: 127.0.0.1:9000
+  secret_key: minioadmin
+  secure: false
+mux:
+  batched_push_timeout: 40000
+  height: 720
+  width: 1280
+ocr:
+  conf_thresh: 0.25
+  dict: /workspace/license-plate/dictionary_plate/dict90.txt
+  engine: /workspace/license-plate/models/rb_scaner_fp16.engine

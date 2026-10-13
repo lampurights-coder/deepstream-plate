@@ -1,0 +1,34 @@
+# Simple 2-camera plate detect + OCR (1 RTSP each)
+rtsp_bases:
+  - id: 11
+    url: "rtsp://user:pass@CAMERA_HOST:554/cam/realmonitor?channel=1&subtype=0"
+    replicate: 1
+  - id: 12
+    url: "rtsp://user:pass@CAMERA_HOST:554/cam/realmonitor?channel=1&subtype=0"
+    replicate: 1
+
+detector:
+  engine: /workspace/models/yolo12_plate_ds_fp16.engine
+  onnx: /workspace/models/yolo12_plate_ds.onnx
+  labels: /workspace/deepstream/plate_pipeline/labels_plate.txt
+  conf_thresh: 0.01
+  plate_class_id: 30
+  num_classes: 32
+  imgsz: 960
+
+ocr:
+  engine: /workspace/license-plate/models/rb_scaner_fp16.engine
+  dict: /workspace/license-plate/dictionary_plate/dict90.txt
+  conf_thresh: 0.25
+
+mux:
+  batch_size: 2
+  width: 1920
+  height: 1080
+  live_source: 1
+  batched_push_timeout: 40000
+
+save:
+  dir: /workspace/output
+  every_n_frames: 15   # save ~2 fps if source is 30fps
+  max_frames: 40       # stop after this many saved frames (total)

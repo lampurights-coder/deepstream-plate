@@ -1,0 +1,18 @@
+rtsp_bases:
+- id: 0
+  url: rtsp://127.0.0.1:8554/cam0
+mux:
+  width: 1280
+  height: 720
+  batched_push_timeout: 40000
+  batch_size: 1
+preview:
+  sink: fakesink
+detector:
+  engine: /workspace/models/yolo12_plate_ds_fp16.engine
+  infer_config: /workspace/deepstream/plate_pipeline/config_infer_primary_plate.txt
+  plate_class_id: 30
+ocr:
+  engine: /workspace/license-plate/models/rb_scaner_fp16.engine
+  dict: /workspace/license-plate/dictionary_plate/dict90.txt
+  conf_thresh: 0.25
